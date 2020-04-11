@@ -111,6 +111,9 @@ def train(epoch):
         progress_bar(batch_idx, len(trainloader), 'Loss: %.3f | Acc: %.3f%% (%d/%d)'
                      % (train_loss/(batch_idx+1), 100.*correct/total, correct, total))
 
+    print('train loss: ' + train_loss/(batch_idx+1))
+    print('train accuracy: ' + 100.*correct/total)
+
 
 def test(epoch):
     global best_acc
@@ -132,6 +135,10 @@ def test(epoch):
             progress_bar(batch_idx, len(testloader), 'Loss: %.3f | Acc: %.3f%% (%d/%d)'
                          % (test_loss/(batch_idx+1), 100.*correct/total, correct, total))
 
+
+    print('test loss: ' + test_loss / (batch_idx + 1))
+    print('test accuracy: ' + 100. * correct / total)
+
     # Save checkpoint.
     acc = 100.*correct/total
     if acc > best_acc:
@@ -147,6 +154,6 @@ def test(epoch):
         best_acc = acc
 
 
-for epoch in range(start_epoch, start_epoch+200):
+for epoch in range(start_epoch, start_epoch+2):
     train(epoch)
     test(epoch)
