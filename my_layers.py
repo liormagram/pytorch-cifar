@@ -6,6 +6,8 @@ class MyBatchNorm2d(nn.BatchNorm2d):
                  affine=True, track_running_stats=True):
         super(MyBatchNorm2d, self).__init__(
             num_features, eps, momentum, affine, track_running_stats)
+        self.running_l2 = torch.zeros(num_features)
+        a=1
 
     def forward(self, input):
         self._check_input_dim(input)
@@ -24,7 +26,7 @@ class MyBatchNorm2d(nn.BatchNorm2d):
         if self.training:
             mean = input.mean([0, 2, 3])
             # use biased var in train
-            var = input.var([0, 2, 3], unbiased=False)
+            # var = input.var([0, 2, 3], unbiased=False)
             l2 = input.norm(2, [0, 2, 3])
             n = input.numel() / input.size(1)
             with torch.no_grad():
