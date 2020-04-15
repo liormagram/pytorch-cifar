@@ -36,8 +36,8 @@ class MyBatchNorm2d(nn.BatchNorm2d):
             mean = self.running_mean
             var = self.running_var
 
-        # input = (input - mean[None, :, None, None]) / (torch.sqrt(var[None, :, None, None] + self.eps))
-        input = (input - mean[None, :, None, None]) / (torch.norm(input[None, :, None, None], 2) + self.eps)
+        input = (input - mean[None, :, None, None]) / (torch.sqrt(var[None, :, None, None] + self.eps))
+        # input = (input - mean[None, :, None, None]) / (torch.norm(input[None, :, None, None], 2) + self.eps)
         if self.affine:
             input = input * self.weight[None, :, None, None] + self.bias[None, :, None, None]
 
