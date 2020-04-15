@@ -6,7 +6,7 @@ class MyBatchNorm2d(nn.BatchNorm2d):
                  affine=True, track_running_stats=True):
         super(MyBatchNorm2d, self).__init__(
             num_features, eps, momentum, affine, track_running_stats)
-        self.running_l2 = torch.zeros(num_features)
+        self.running_l2 = torch.zeros(num_features).to('cuda:0')
         a=1
 
     def forward(self, input):
