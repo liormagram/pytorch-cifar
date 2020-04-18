@@ -1,5 +1,6 @@
 import torch
 import torch.nn as nn
+from main import device
 
 class MyBatchNorm2d(nn.BatchNorm2d):
     def __init__(self, num_features, eps=1e-5, momentum=0.1,
@@ -38,8 +39,8 @@ class MyBatchNorm2d(nn.BatchNorm2d):
                 # self.running_var = (exponential_average_factor * var * n / (n - 1)\
                 #     + (1 - exponential_average_factor) * self.running_var).to('cuda')
 
-                self.running_l2 = (exponential_average_factor * l2 * n / (n - 1)\
-                    + (1 - exponential_average_factor) * self.running_l2).to('cuda')
+                self.running_l2 = (exponential_average_factor * l2.to('cuda') * n / (n - 1)\
+                    + (1 - exponential_average_factor) * self.running_l2.to('cuda')).to('cuda')
         else:
             mean = self.running_mean
             # var = self.running_var
