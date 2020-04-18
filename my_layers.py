@@ -25,7 +25,7 @@ class MyBatchNorm2d(nn.BatchNorm2d):
 
         # calculate running estimates
         if self.training:
-            n = (input.numel() / input.size(1)).to('cuda:0')
+            n = input.numel() / input.size(1)
             mean = input.mean([0, 2, 3])
             # use biased var in train
             var = input.var([0, 2, 3], unbiased=False)
@@ -35,8 +35,8 @@ class MyBatchNorm2d(nn.BatchNorm2d):
                 self.running_mean = exponential_average_factor * mean\
                     + (1 - exponential_average_factor) * self.running_mean
                 # update running_var with unbiased var
-                self.running_var = exponential_average_factor * var * n / (n - 1)\
-                    + (1 - exponential_average_factor) * self.running_var
+                self.running_var = (exponential_average_factor * var * n / (n - 1)\
+                    + (1 - exponential_average_factor) * self.running_var).to('cuda:0')
 
                 self.running_l2 = exponential_average_factor * l2 * n / (n - 1)\
                     + (1 - exponential_average_factor) * self.running_l2
