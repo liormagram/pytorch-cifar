@@ -25,7 +25,7 @@ class MyBatchNorm2d(nn.BatchNorm2d):
 
         # calculate running estimates
         if self.training:
-            n = input.numel() / input.size(1)
+            n = (input.numel() / input.size(1)).to('cuda:0')
             mean = input.mean([0, 2, 3])
             # use biased var in train
             var = input.var([0, 2, 3], unbiased=False)
