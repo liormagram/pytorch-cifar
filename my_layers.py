@@ -53,7 +53,7 @@ class MyBatchNorm2d(nn.BatchNorm2d):
 
         # input_var = ((input - mean[None, :, None, None]) / (torch.sqrt(var[None, :, None, None] + self.eps))).to('cuda')
         # input = ((input - mean[None, :, None, None]) / (l2[None, :, None, None] + self.eps)).to('cuda')
-        input = ((input - mean[None, :, None, None]) / (l1[None, :, None, None] + self.eps)).to('cuda')
+        input = ((input - mean[None, :, None, None]) / (l1[None, :, None, None].to('cuda') + self.eps)).to('cuda')
 
         # print('input: ')
         # print(input)
