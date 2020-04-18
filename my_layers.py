@@ -1,6 +1,5 @@
 import torch
 import torch.nn as nn
-from main import device
 
 class MyBatchNorm2d(nn.BatchNorm2d):
     def __init__(self, num_features, eps=1e-5, momentum=0.1,
