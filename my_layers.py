@@ -29,7 +29,7 @@ class MyBatchNorm2d(nn.BatchNorm2d):
             mean = input.mean([0, 2, 3])
             # use biased var in train
             var = input.var([0, 2, 3], unbiased=False)
-            l2 = (input-mean[None, :, None, None]).norm(2, [0, 2, 3])/torch.sqrt(torch.tensor([n-1]))
+            l2 = (input-mean[None, :, None, None]).norm(2, [0, 2, 3])/torch.sqrt(torch.tensor([n-1]).to('cuda:0'))
 
             with torch.no_grad():
                 self.running_mean = exponential_average_factor * mean\
@@ -45,8 +45,8 @@ class MyBatchNorm2d(nn.BatchNorm2d):
             var = self.running_var
             l2 = self.running_l2
 
-        input_var = (input - mean[None, :, None, None]) / (torch.sqrt(var[None, :, None, None] + self.eps))
-        input = (input - mean[None, :, None, None]) / (l2[None, :, None, None] + self.eps)
+        # input_var = (input - mean[None, :, None, None]) / (torch.sqrt(var[None, :, None, None] + self.eps))
+        input = ((input - mean[None, :, None, None]) / (l2[None, :, None, None] + self.eps)).to('cuda:0')
         # input = (input - mean[None, :, None, None]) / (torch.norm(input[None, :, None, None], 2) + self.eps)
         if self.affine:
             input = input * self.weight[None, :, None, None] + self.bias[None, :, None, None]
