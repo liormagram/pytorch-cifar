@@ -38,8 +38,8 @@ class MyBatchNorm2d(nn.BatchNorm2d):
                 self.running_var = (exponential_average_factor * var * n / (n - 1)\
                     + (1 - exponential_average_factor) * self.running_var).to('cuda:0')
 
-                self.running_l2 = exponential_average_factor * l2 * n / (n - 1)\
-                    + (1 - exponential_average_factor) * self.running_l2
+                self.running_l2 = (exponential_average_factor * l2 * n / (n - 1)\
+                    + (1 - exponential_average_factor) * self.running_l2).to('cuda:0')
         else:
             mean = self.running_mean
             var = self.running_var
