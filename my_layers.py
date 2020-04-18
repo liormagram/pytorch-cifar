@@ -35,18 +35,23 @@ class MyBatchNorm2d(nn.BatchNorm2d):
                 self.running_mean = exponential_average_factor * mean\
                     + (1 - exponential_average_factor) * self.running_mean
                 # update running_var with unbiased var
-                # self.running_var = (exponential_average_factor * var * n / (n - 1)\
-                #     + (1 - exponential_average_factor) * self.running_var).to('cuda')
+                self.running_var = (exponential_average_factor * var * n / (n - 1)\
+                    + (1 - exponential_average_factor) * self.running_var).to('cuda')
 
                 self.running_l2 = (exponential_average_factor * l2.to('cuda') * n / (n - 1)\
                     + (1 - exponential_average_factor) * self.running_l2.to('cuda')).to('cuda')
         else:
             mean = self.running_mean
-            # var = self.running_var
+            var = self.running_var
             l2 = self.running_l2
 
-        # input_var = (input - mean[None, :, None, None]) / (torch.sqrt(var[None, :, None, None] + self.eps))
+        input_var = ((input - mean[None, :, None, None]) / (torch.sqrt(var[None, :, None, None] + self.eps))).to('cuda')
         input = ((input - mean[None, :, None, None]) / (l2[None, :, None, None] + self.eps)).to('cuda')
+
+        print('input: ')
+        print(input)
+        print('input_var: ')
+        print(input_var)
         # input = (input - mean[None, :, None, None]) / (torch.norm(input[None, :, None, None], 2) + self.eps)
         if self.affine:
             input = input * self.weight[None, :, None, None] + self.bias[None, :, None, None]
