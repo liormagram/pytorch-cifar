@@ -29,7 +29,7 @@ class MyBatchNorm2d(nn.BatchNorm2d):
             mean = input.mean([0, 2, 3])
             # use biased var in train
             var = input.var([0, 2, 3], unbiased=False)
-            l2 = (input-mean[None, :, None, None]).norm(2, [0, 2, 3])/torch.sqrt(torch.tensor([n-1]).to('cuda:0'))
+            l2 = (input-mean[None, :, None, None]).norm(2, [0, 2, 3])/torch.sqrt(torch.tensor([n-1]))
 
             with torch.no_grad():
                 self.running_mean = exponential_average_factor * mean\
