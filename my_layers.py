@@ -7,6 +7,7 @@ class MyBatchNorm2d(nn.BatchNorm2d):
         super(MyBatchNorm2d, self).__init__(
             num_features, eps, momentum, affine, track_running_stats)
         # self.running_l2 = torch.zeros(num_features).to('cuda:0')
+        self.running_l3 = torch.zeros(num_features)
         self.running_l2 = torch.zeros(num_features)
         self.running_l1 = torch.zeros(num_features)
         a=1
@@ -30,6 +31,7 @@ class MyBatchNorm2d(nn.BatchNorm2d):
             mean = input.mean([0, 2, 3])
             # use biased var in train
             var = input.var([0, 2, 3], unbiased=False)
+            l3 = (input-mean[None, :, None, None]).norm(2, [0, 2, 3])/torch.pow(torch.tensor([n-1]).to('cuda'), 1/3.0)
             l2 = (input-mean[None, :, None, None]).norm(2, [0, 2, 3])/torch.sqrt(torch.tensor([n-1]).to('cuda'))
             l1 = (input-mean[None, :, None, None]).norm(1, [0, 2, 3])/(torch.tensor([n-1]).to('cuda'))
 
@@ -40,14 +42,18 @@ class MyBatchNorm2d(nn.BatchNorm2d):
                 # self.running_var = (exponential_average_factor * var * n / (n - 1)\
                 #     + (1 - exponential_average_factor) * self.running_var).to('cuda')
 
-                self.running_l2 = (exponential_average_factor * l2.to('cuda') * n / (n - 1)\
-                    + (1 - exponential_average_factor) * self.running_l2.to('cuda')).to('cuda')
+                self.running_l3 = (exponential_average_factor * l3.to('cuda') * n / (n - 1)\
+                                    + (1 - exponential_average_factor) * self.running_l3.to('cuda')).to('cuda')
 
-                self.running_l2 = (exponential_average_factor * l1.to('cuda') * n / (n - 1) \
-                    + (1 - exponential_average_factor) * self.running_l1.to('cuda')).to('cuda')
+                self.running_l2 = (exponential_average_factor * l2.to('cuda') * n / (n - 1) \
+                                   + (1 - exponential_average_factor) * self.running_l2.to('cuda')).to('cuda')
+
+                self.running_l1 = (exponential_average_factor * l1.to('cuda') * n / (n - 1) \
+                                   + (1 - exponential_average_factor) * self.running_l1.to('cuda')).to('cuda')
         else:
             mean = self.running_mean
             # var = self.running_var
+            l3 = self.running_l3
             l2 = self.running_l2
             l1 = self.running_l1
 
