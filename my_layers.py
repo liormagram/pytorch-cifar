@@ -31,7 +31,8 @@ class MyBatchNorm2d(nn.BatchNorm2d):
             mean = input.mean([0, 2, 3])
             # use biased var in train
             var = input.var([0, 2, 3], unbiased=False)
-            l3 = (input-mean[None, :, None, None]).norm(2, [0, 2, 3])/torch.pow(torch.tensor([n-1]).to('cuda'), 1/3.0)
+            # l3 = (input-mean[None, :, None, None]).norm(2, [0, 2, 3])/torch.pow(torch.tensor([n-1]).to('cuda'), 1/3.0)
+            l3 = (input-mean[None, :, None, None]).norm(3, [0, 2, 3])/torch.pow(torch.tensor([n-1]).to('cuda'), 1/3.0)
             l2 = (input-mean[None, :, None, None]).norm(2, [0, 2, 3])/torch.sqrt(torch.tensor([n-1]).to('cuda'))
             l1 = (input-mean[None, :, None, None]).norm(1, [0, 2, 3])/(torch.tensor([n-1]).to('cuda'))
 
