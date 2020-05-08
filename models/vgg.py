@@ -1,7 +1,7 @@
 '''VGG11/13/16/19 in Pytorch.'''
 import torch
 import torch.nn as nn
-from my_layers import MyBatchNorm2d
+from lp_norm import MyLpNorm2d
 
 
 cfg = {
@@ -33,7 +33,7 @@ class VGG(nn.Module):
             else:
                 layers += [nn.Conv2d(in_channels, x, kernel_size=3, padding=1),
                            # nn.BatchNorm2d(x),
-                           MyBatchNorm2d(x),
+                           MyLpNorm2d(x, 2),
                            nn.ReLU(inplace=True)]
                 in_channels = x
         layers += [nn.AvgPool2d(kernel_size=1, stride=1)]
