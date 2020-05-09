@@ -121,8 +121,8 @@ def train(epoch):
         progress_bar(batch_idx, len(trainloader), 'Loss: %.3f | Acc: %.3f%% (%d/%d)'
                      % (train_loss/(batch_idx+1), 100.*correct/total, correct, total))
 
-    writer.add_scalar('Loss/train', str(train_loss/(batch_idx+1)), epoch)
-    writer.add_scalar('Accuracy/train', str(100.*correct/total), epoch)
+    writer.add_scalar('Loss/train', train_loss/(batch_idx+1), epoch)
+    writer.add_scalar('Accuracy/train', 100.*correct/total, epoch)
 
     print('train loss: ' + str(train_loss/(batch_idx+1)))
     print('train accuracy: ' + str(100.*correct/total))
@@ -148,8 +148,8 @@ def test(epoch):
             progress_bar(batch_idx, len(testloader), 'Loss: %.3f | Acc: %.3f%% (%d/%d)'
                          % (test_loss/(batch_idx+1), 100.*correct/total, correct, total))
 
-    writer.add_scalar('Loss/test', str(test_loss / (batch_idx + 1)), epoch)
-    writer.add_scalar('Accuracy/test', str(100. * correct / total), epoch)
+    writer.add_scalar('Loss/test',(test_loss / (batch_idx + 1), epoch)
+    writer.add_scalar('Accuracy/test', 100. * correct / total, epoch)
 
     print('test loss: ' + str(test_loss / (batch_idx + 1)))
     print('test accuracy: ' + str(100. * correct / total))
