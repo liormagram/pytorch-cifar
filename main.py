@@ -119,11 +119,13 @@ def train(epoch):
         progress_bar(batch_idx, len(trainloader), 'Loss: %.3f | Acc: %.3f%% (%d/%d)'
                      % (train_loss/(batch_idx+1), 100.*correct/total, correct, total))
 
-    writer.add_scalar('Loss/train', train_loss/(batch_idx+1), epoch)
-    writer.add_scalar('Accuracy/train', 100.*correct/total, epoch)
+    epoch_train_loss = train_loss / (batch_idx + 1)
+    epoch_train_acc = 100. * correct / total
 
-    print('train loss: ' + str(train_loss/(batch_idx+1)))
-    print('train accuracy: ' + str(100.*correct/total))
+    print('train loss: ' + str(epoch_train_loss))
+    print('train accuracy: ' + str(epoch_train_acc))
+
+    return epoch_train_loss, epoch_train_acc
 
 
 def test(epoch):
@@ -146,11 +148,11 @@ def test(epoch):
             progress_bar(batch_idx, len(testloader), 'Loss: %.3f | Acc: %.3f%% (%d/%d)'
                          % (test_loss/(batch_idx+1), 100.*correct/total, correct, total))
 
-    writer.add_scalar('Loss/test', test_loss / (batch_idx + 1), epoch)
-    writer.add_scalar('Accuracy/test', 100. * correct / total, epoch)
+    epoch_test_loss = test_loss / (batch_idx + 1)
+    epoch_test_acc = 100. * correct / total
 
-    print('test loss: ' + str(test_loss / (batch_idx + 1)))
-    print('test accuracy: ' + str(100. * correct / total))
+    print('test loss: ' + str(epoch_test_loss))
+    print('test accuracy: ' + str(epoch_test_acc))
 
     # Save checkpoint.
     acc = 100.*correct/total
@@ -166,8 +168,14 @@ def test(epoch):
         torch.save(state, './checkpoint/ckpt.pth')
         best_acc = acc
 
+    return epoch_test_loss, epoch_test_acc
+
 
 for epoch in range(start_epoch, start_epoch + args.epochs):
-    train(epoch)
-    test(epoch)
-    writer.close()
+    train_loss, train_acc = train(epoch)
+    test_loss, test_acc = test(epoch)
+
+    writer.add_scalars('Loss', {'train_loss':train_loss, 'test_loss':test_loss}, epoch)
+    writer.add_scalars('Accuracy', {'train_acc':train_acc, 'test_acc':test_acc}, epoch)
+
+writer.close()
