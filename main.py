@@ -19,6 +19,7 @@ from torch.utils.tensorboard import SummaryWriter
 
 parser = argparse.ArgumentParser(description='PyTorch CIFAR10 Training')
 parser.add_argument('--lr', default=0.1, type=float, help='learning rate')
+parser.add_argument('--epochs', default=50, type=int, help='epochs')
 parser.add_argument('--resume', '-r', action='store_true',
                     help='resume from checkpoint')
 args = parser.parse_args()
@@ -28,10 +29,8 @@ print(device)
 best_acc = 0  # best test accuracy
 start_epoch = 0  # start from epoch 0 or last checkpoint epoch
 
-# tensorboardX
+# tensorboard
 writer = SummaryWriter()
-
-
 
 # Data
 print('==> Preparing data..')
@@ -168,7 +167,7 @@ def test(epoch):
         best_acc = acc
 
 
-for epoch in range(start_epoch, start_epoch+3):
+for epoch in range(start_epoch, start_epoch + args.epochs):
     train(epoch)
     test(epoch)
     writer.close()
