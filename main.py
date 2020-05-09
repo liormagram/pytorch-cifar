@@ -4,6 +4,7 @@ import torch.nn as nn
 import torch.optim as optim
 import torch.nn.functional as F
 import torch.backends.cudnn as cudnn
+import numpy as np
 
 import torchvision
 import torchvision.transforms as transforms
@@ -13,6 +14,8 @@ import argparse
 
 from models import *
 from utils import progress_bar
+import tensorboardX
+from torch.utils.tensorboard import SummaryWriter
 
 
 parser = argparse.ArgumentParser(description='PyTorch CIFAR10 Training')
@@ -25,6 +28,11 @@ device = 'cuda' if torch.cuda.is_available() else 'cpu'
 print(device)
 best_acc = 0  # best test accuracy
 start_epoch = 0  # start from epoch 0 or last checkpoint epoch
+
+# tensorboardX
+writer = SummaryWriter()
+
+
 
 # Data
 print('==> Preparing data..')
@@ -109,8 +117,12 @@ def train(epoch):
         total += targets.size(0)
         correct += predicted.eq(targets).sum().item()
 
+
         progress_bar(batch_idx, len(trainloader), 'Loss: %.3f | Acc: %.3f%% (%d/%d)'
                      % (train_loss/(batch_idx+1), 100.*correct/total, correct, total))
+
+    writer.add_scalar('Loss/train', str(train_loss/(batch_idx+1)), epoch)
+    writer.add_scalar('Accuracy/train', str(100.*correct/total), epoch)
 
     print('train loss: ' + str(train_loss/(batch_idx+1)))
     print('train accuracy: ' + str(100.*correct/total))
@@ -136,6 +148,8 @@ def test(epoch):
             progress_bar(batch_idx, len(testloader), 'Loss: %.3f | Acc: %.3f%% (%d/%d)'
                          % (test_loss/(batch_idx+1), 100.*correct/total, correct, total))
 
+    writer.add_scalar('Loss/test', str(test_loss / (batch_idx + 1)), epoch)
+    writer.add_scalar('Accuracy/test', str(100. * correct / total), epoch)
 
     print('test loss: ' + str(test_loss / (batch_idx + 1)))
     print('test accuracy: ' + str(100. * correct / total))
@@ -155,6 +169,7 @@ def test(epoch):
         best_acc = acc
 
 
-for epoch in range(start_epoch, start_epoch+200):
+for epoch in range(start_epoch, start_epoch+3):
     train(epoch)
     test(epoch)
+    writer.close()
