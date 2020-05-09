@@ -3,10 +3,11 @@ import torch.nn as nn
 
 class MyLpNorm2d(nn.BatchNorm2d):
     def __init__(self, num_features, eps=1e-5, momentum=0.1,
-                 affine=True, track_running_stats=True, norm=2):
+                 affine=True, track_running_stats=True, norm=2, device='cpu'):
         super(MyLpNorm2d, self).__init__(
             num_features, eps, momentum, affine, track_running_stats)
         self.norm = norm
+        self.device = device
         self.running_lp = torch.zeros(num_features)
 
     def forward(self, input):
@@ -28,18 +29,18 @@ class MyLpNorm2d(nn.BatchNorm2d):
             mean = input.mean([0, 2, 3])
             # use biased var in train
             lp = (input-mean[None, :, None, None]).norm(self.norm, [0, 2, 3]) / \
-                 torch.pow(torch.tensor([n-1]).to('cuda'), 1/float(self.norm))
+                 torch.pow(torch.tensor([n-1]).to(self.device), 1/float(self.norm))
 
             with torch.no_grad():
                 self.running_mean = exponential_average_factor * mean\
                     + (1 - exponential_average_factor) * self.running_mean
 
-                self.running_lp = (exponential_average_factor * lp.to('cuda') * n / (n - 1)\
-                                    + (1 - exponential_average_factor) * self.running_lp.to('cuda')).to('cuda')
+                self.running_lp = (exponential_average_factor * lp.to(self.device) * n / (n - 1)\
+                                    + (1 - exponential_average_factor) * self.running_lp.to(self.device)).to(self.device)
         else:
             mean = self.running_mean
             lp = self.running_lp
-        input = ((input - mean[None, :, None, None]) / (lp[None, :, None, None].to('cuda') + self.eps)).to('cuda')
+        input = ((input - mean[None, :, None, None]) / (lp[None, :, None, None].to(self.device) + self.eps)).to(self.device)
 
         if self.affine:
             input = input * self.weight[None, :, None, None] + self.bias[None, :, None, None]

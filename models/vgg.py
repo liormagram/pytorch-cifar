@@ -3,7 +3,6 @@ import torch
 import torch.nn as nn
 from lp_norm import MyLpNorm2d
 
-
 cfg = {
     'VGG11': [64, 'M', 128, 'M', 256, 256, 'M', 512, 512, 'M', 512, 512, 'M'],
     'VGG13': [64, 64, 'M', 128, 128, 'M', 256, 256, 'M', 512, 512, 'M', 512, 512, 'M'],
@@ -11,13 +10,13 @@ cfg = {
     'VGG19': [64, 64, 'M', 128, 128, 'M', 256, 256, 256, 256, 'M', 512, 512, 512, 512, 'M', 512, 512, 512, 512, 'M'],
 }
 
-
 class VGG(nn.Module):
-    def __init__(self, vgg_name, lp_norm=2):
+    def __init__(self, vgg_name, lp_norm, device):
         super(VGG, self).__init__()
+        self.lp_norm = lp_norm
         self.features = self._make_layers(cfg[vgg_name])
         self.classifier = nn.Linear(512, 10)
-        self.lp_norm = lp_norm
+        self.device = device
 
     def forward(self, x):
         out = self.features(x)
@@ -34,7 +33,7 @@ class VGG(nn.Module):
             else:
                 layers += [nn.Conv2d(in_channels, x, kernel_size=3, padding=1),
                            # nn.BatchNorm2d(x),
-                           MyLpNorm2d(x, norm=self.lp_norm),
+                           MyLpNorm2d(x, norm=self.lp_norm, device=device),
                            nn.ReLU(inplace=True)]
                 in_channels = x
         layers += [nn.AvgPool2d(kernel_size=1, stride=1)]
