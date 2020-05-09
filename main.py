@@ -14,7 +14,6 @@ import argparse
 
 from models import *
 from utils import progress_bar
-import tensorboardX
 from torch.utils.tensorboard import SummaryWriter
 
 
