@@ -19,6 +19,7 @@ from torch.utils.tensorboard import SummaryWriter
 
 parser = argparse.ArgumentParser(description='PyTorch CIFAR10 Training')
 parser.add_argument('--lr', default=0.1, type=float, help='learning rate')
+parser.add_argument('--lp_norm', default=2, type=int, help='lp norm')
 parser.add_argument('--epochs', default=50, type=int, help='epochs')
 parser.add_argument('--resume', '-r', action='store_true',
                     help='resume from checkpoint')
@@ -61,7 +62,7 @@ classes = ('plane', 'car', 'bird', 'cat', 'deer',
 
 # Model
 print('==> Building model..')
-net = VGG('VGG19')
+net = VGG('VGG19', args.lp_norm)
 # net = ResNet18()
 # net = PreActResNet18()
 # net = GoogLeNet()

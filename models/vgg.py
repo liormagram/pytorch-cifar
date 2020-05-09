@@ -13,10 +13,11 @@ cfg = {
 
 
 class VGG(nn.Module):
-    def __init__(self, vgg_name):
+    def __init__(self, vgg_name, lp_norm=2):
         super(VGG, self).__init__()
         self.features = self._make_layers(cfg[vgg_name])
         self.classifier = nn.Linear(512, 10)
+        self.lp_norm = lp_norm
 
     def forward(self, x):
         out = self.features(x)
@@ -33,7 +34,7 @@ class VGG(nn.Module):
             else:
                 layers += [nn.Conv2d(in_channels, x, kernel_size=3, padding=1),
                            # nn.BatchNorm2d(x),
-                           MyLpNorm2d(x, norm=2),
+                           MyLpNorm2d(x, norm=self.lp_norm),
                            nn.ReLU(inplace=True)]
                 in_channels = x
         layers += [nn.AvgPool2d(kernel_size=1, stride=1)]
