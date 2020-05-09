@@ -148,7 +148,7 @@ def test(epoch):
             progress_bar(batch_idx, len(testloader), 'Loss: %.3f | Acc: %.3f%% (%d/%d)'
                          % (test_loss/(batch_idx+1), 100.*correct/total, correct, total))
 
-    writer.add_scalar('Loss/test',(test_loss / (batch_idx + 1), epoch)
+    writer.add_scalar('Loss/test', test_loss / (batch_idx + 1), epoch)
     writer.add_scalar('Accuracy/test', 100. * correct / total, epoch)
 
     print('test loss: ' + str(test_loss / (batch_idx + 1)))
