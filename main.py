@@ -113,7 +113,7 @@ def main():
     # Training
     for epoch in range(start_epoch, start_epoch + args.epochs):
         train_loss, train_acc = train(net, trainloader, criterion, optimizer, epoch, device)
-        test_loss, test_acc = test(net, testloader, criterion, optimizer, epoch, device, best_acc)
+        test_loss, test_acc = test(net, testloader, criterion, epoch, device, best_acc)
 
         writer.add_scalars('Loss', {'train_loss': train_loss, 'test_loss': test_loss}, epoch)
         writer.add_scalars('Accuracy', {'train_acc': train_acc, 'test_acc': test_acc}, epoch)
