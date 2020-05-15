@@ -23,6 +23,7 @@ def main():
     parser.add_argument('--lr', default=0.1, type=float, help='learning rate')
     parser.add_argument('--lp_norm', default=2, type=int, help='lp norm')
     parser.add_argument('--epochs', default=50, type=int, help='epochs')
+    parser.add_argument('--batch_size', default=512, type=int, help='batch_size')
     parser.add_argument('--resume', '-r', action='store_true',
                         help='resume from checkpoint')
     args = parser.parse_args()
@@ -55,12 +56,12 @@ def main():
         trainset = torchvision.datasets.CIFAR10(
             root='./data', train=True, download=True, transform=transform_train)
         trainloader = torch.utils.data.DataLoader(
-            trainset, batch_size=256, shuffle=True, num_workers=2)
+            trainset, batch_size=args.batch_size, shuffle=True, num_workers=2)
 
         testset = torchvision.datasets.CIFAR10(
             root='./data', train=False, download=True, transform=transform_test)
         testloader = torch.utils.data.DataLoader(
-            testset, batch_size=256, shuffle=False, num_workers=2)
+            testset, batch_size=batch_size, shuffle=False, num_workers=2)
     else:
         trainset = torchvision.datasets.CIFAR10(
             root='./data', train=True, download=True, transform=transform_train)
