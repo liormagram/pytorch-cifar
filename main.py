@@ -27,8 +27,10 @@ def main():
                         help='resume from checkpoint')
     args = parser.parse_args()
 
+    print('pre')
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
     print(device)
+    print('post')
     best_acc = 0  # best test accuracy
     start_epoch = 0  # start from epoch 0 or last checkpoint epoch
 
