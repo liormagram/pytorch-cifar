@@ -181,13 +181,15 @@ def main_nets():
     # Model
     print('==> Building model..')
     nets = []
-    norms = [1, 2, 3, 4, 5, 10, 100, 1000]
-    # nets.append(VGG('VGG11', norm_type='ST', device=device).to(device))
-    # nets.append(VGG('VGG11', norm_type='BN', device=device).to(device))
+    norms = [1, 2, 3, 4, 5, 10]
+    other_norms = ['BN']
     for i in range(len(norms)):
         nets.append(VGG('VGG11', norm_type='LP', lp_norm=norms[i], device=device).to(device))
 
-    net_names = ['l'+str(x) for x in norms] + ['ST', 'BN']
+    for norm_type in other_norms:
+        nets.append(VGG('VGG11', norm_type=norm_type, device=device).to(device))
+
+    net_names = ['l'+str(x) for x in norms] + other_norms
     for i in range(len(nets)):
         if device == 'cuda':
             nets[i] = torch.nn.DataParallel(nets[i])
@@ -235,10 +237,10 @@ def main_nets():
             train_loss, train_acc = train(nets[i], trainloader, criterion, optimizers[i], epoch, device)
             test_loss, test_acc, best_acc = test(nets[i], testloader, criterion, epoch, device, best_acc)
 
-            loss_train_dict['l'+str(norms[i])] = train_loss
-            loss_test_dict['l'+str(norms[i])] = test_loss
-            acc_train_dict['l' + str(norms[i])] = train_acc
-            acc_test_dict['l' + str(norms[i])] = test_acc
+            loss_train_dict[str(net_names[i])] = train_loss
+            loss_test_dict[str(net_names[i])] = test_loss
+            acc_train_dict[str(net_names[i])] = train_acc
+            acc_test_dict[str(net_names[i])] = test_acc
 
         # writer.add_scalars('Loss_'+str(i), {'train_loss_'+str(i): train_loss, 'test_loss_'+str(i): test_loss}, epoch)
         # writer.add_scalars('Accuracy_'+str(i), {'train_acc_'+str(i): train_acc, 'test_acc_'+str(i): test_acc}, epoch)
