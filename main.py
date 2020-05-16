@@ -181,9 +181,17 @@ def main_nets():
     # Model
     print('==> Building model..')
     nets = []
-    norms = [1, 2, 10, 100, 1000]
-    for i in range(5):
-        nets.append(VGG('VGG11', lp_norm=norms[i], device=device).to(device))
+    norms = [1, 2, 3, 4, 5, 10, 100, 1000]
+    nets.append(VGG('VGG11', norm_type='ST', device=device).to(device))
+    nets.append(VGG('VGG11', norm_type='BN', device=device).to(device))
+    for i in range(len(norms)):
+        nets.append(VGG('VGG11', norm_type='LP', lp_norm=norms[i], device=device).to(device))
+
+    for i in range(len(nets)):
+        if device == 'cuda':
+            nets[i] = torch.nn.DataParallel(nets[i])
+            cudnn.benchmark = True
+
     # net = ResNet18()
     # net = PreActResNet18()
     # net = GoogLeNet()
@@ -198,9 +206,7 @@ def main_nets():
     # net = EfficientNetB0()
     # net = RegNetX_200MF()
     # net = net.to(device)
-        if device == 'cuda':
-            nets[i] = torch.nn.DataParallel(nets[i])
-            cudnn.benchmark = True
+
 
     # if args.resume:
     #     # Load checkpoint.
