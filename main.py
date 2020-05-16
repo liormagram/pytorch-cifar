@@ -181,8 +181,9 @@ def main_nets():
     # Model
     print('==> Building model..')
     nets = []
+    norms = [1, 2, 10, 100, 1000]
     for i in range(5):
-        nets.append(VGG('VGG11', lp_norm=i+1, device=device).to(device))
+        nets.append(VGG('VGG11', lp_norm=norms[i], device=device).to(device))
     # net = ResNet18()
     # net = PreActResNet18()
     # net = GoogLeNet()
@@ -212,26 +213,25 @@ def main_nets():
 
     criterion = nn.CrossEntropyLoss()
     optimizers = []
-    for i in range(5):
+    for i in range(len(nets)):
         optimizers.append(optim.SGD(nets[i].parameters(), lr=args.lr,
                               momentum=0.9, weight_decay=5e-4))
 
     # Training
-
     for epoch in range(start_epoch, start_epoch + args.epochs):
         loss_train_dict = {}
         loss_test_dict = {}
         acc_train_dict = {}
         acc_test_dict = {}
 
-        for i in range(5):
+        for i in range(len(nets)):
             train_loss, train_acc = train(nets[i], trainloader, criterion, optimizers[i], epoch, device)
             test_loss, test_acc, best_acc = test(nets[i], testloader, criterion, epoch, device, best_acc)
 
-            loss_train_dict['l'+str(i+1)] = train_loss
-            loss_test_dict['l'+str(i+1)] = test_loss
-            acc_train_dict['l' + str(i + 1)] = train_acc
-            acc_test_dict['l' + str(i + 1)] = test_acc
+            loss_train_dict['l'+str(norms[i])] = train_loss
+            loss_test_dict['l'+str(norms[i])] = test_loss
+            acc_train_dict['l' + str(norms[i])] = train_acc
+            acc_test_dict['l' + str(norms[i])] = test_acc
 
         # writer.add_scalars('Loss_'+str(i), {'train_loss_'+str(i): train_loss, 'test_loss_'+str(i): test_loss}, epoch)
         # writer.add_scalars('Accuracy_'+str(i), {'train_acc_'+str(i): train_acc, 'test_acc_'+str(i): test_acc}, epoch)
