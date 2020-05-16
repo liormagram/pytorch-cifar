@@ -182,11 +182,12 @@ def main_nets():
     print('==> Building model..')
     nets = []
     norms = [1, 2, 3, 4, 5, 10, 100, 1000]
-    nets.append(VGG('VGG11', norm_type='ST', device=device).to(device))
-    nets.append(VGG('VGG11', norm_type='BN', device=device).to(device))
+    # nets.append(VGG('VGG11', norm_type='ST', device=device).to(device))
+    # nets.append(VGG('VGG11', norm_type='BN', device=device).to(device))
     for i in range(len(norms)):
         nets.append(VGG('VGG11', norm_type='LP', lp_norm=norms[i], device=device).to(device))
 
+    net_names = ['l'+str(x) for x in norms] + ['ST', 'BN']
     for i in range(len(nets)):
         if device == 'cuda':
             nets[i] = torch.nn.DataParallel(nets[i])
