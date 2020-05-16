@@ -39,8 +39,6 @@ class VGG(nn.Module):
                     layers += [nn.BatchNorm2d(x)]
                 elif norm_type == 'LP':
                     layers += [MyLpNorm2d(x, norm=self.lp_norm, device=self.device)]
-                else:
-                    layers += [nn.Conv2d(in_channels, x, kernel_size=3, padding=1)]
                 layers += [nn.ReLU(inplace=True)]
                 in_channels = x
         layers += [nn.AvgPool2d(kernel_size=1, stride=1)]
