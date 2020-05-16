@@ -35,7 +35,7 @@ class VGG(nn.Module):
             else:
                 layers += [nn.Conv2d(in_channels, x, kernel_size=3, padding=1)]
                 if norm_type == 'BN':
-                    layers += [MyBatchNorm2d(x)]
+                    layers += [MyBatchNorm2d(x, device=self.device)]
                     # layers += [nn.BatchNorm2d(x)]
                 elif norm_type == 'LP':
                     layers += [MyLpNorm2d(x, norm=self.lp_norm, device=self.device)]
