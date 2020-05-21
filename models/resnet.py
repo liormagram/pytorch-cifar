@@ -145,7 +145,7 @@ def ResNet152(norm_type='ST', lp_norm=2, device='cpu'):
 
 def norm(norm_type, num_features, lp_norm, device):
     if norm_type == 'ST':
-        return Identity()
+        return Identity(device=device)
     if norm_type == 'BN':
         return MyLpNorm2d(num_features, lp_norm, device)
     if norm_type == 'LP':

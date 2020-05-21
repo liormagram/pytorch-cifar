@@ -48,8 +48,9 @@ class MyBatchNorm2d(nn.BatchNorm2d):
 
 
 class Identity(nn.BatchNorm2d):
-    def __init__(self, num_features=1):
-        super(Identity, self).__init__(num_features)
+    def __init__(self, num_features=1, device='cpu'):
+        super(Identity, self).__init__(num_features, device)
+        self.device = device
 
     def forward(self, input):
-        return input
+        return input.to(self.device)
