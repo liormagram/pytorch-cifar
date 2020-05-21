@@ -120,19 +120,19 @@ class ResNet(nn.Module):
 
 
 def ResNet18(norm_type='ST', lp_norm=2, device='cpu'):
-    return ResNet(BasicBlock, [2,2,2,2], norm_type, lp_norm, device)
+    return ResNet(BasicBlock, [2,2,2,2], norm_type=norm_type, lp_norm=lp_norm, device=device)
 
 def ResNet34(norm_type='ST', lp_norm=2, device='cpu'):
-    return ResNet(BasicBlock, [3,4,6,3], norm_type, lp_norm, device)
+    return ResNet(BasicBlock, [3,4,6,3], norm_type=norm_type, lp_norm=lp_norm, device=device)
 
 def ResNet50(norm_type='ST', lp_norm=2, device='cpu'):
-    return ResNet(Bottleneck, [3,4,6,3], norm_type, lp_norm, device)
+    return ResNet(Bottleneck, [3,4,6,3], norm_type=norm_type, lp_norm=lp_norm, device=device)
 
 def ResNet101(norm_type='ST', lp_norm=2, device='cpu'):
-    return ResNet(Bottleneck, [3,4,23,3], norm_type, lp_norm, device)
+    return ResNet(Bottleneck, [3,4,23,3], norm_type=norm_type, lp_norm=lp_norm, device=device)
 
 def ResNet152(norm_type='ST', lp_norm=2, device='cpu'):
-    return ResNet(Bottleneck, [3,8,36,3], norm_type, lp_norm, device)
+    return ResNet(Bottleneck, [3,8,36,3], norm_type=norm_type, lp_norm=lp_norm, device=device)
 
 #
 # def test():
