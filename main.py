@@ -184,10 +184,12 @@ def main_nets():
     norms = [1, 2, 3, 4, 5, 10]
     other_norms = ['BN', 'ST']
     for i in range(len(norms)):
-        nets.append(VGG('VGG11', norm_type='LP', lp_norm=norms[i], device=device).to(device))
+        # nets.append(VGG('VGG11', norm_type='LP', lp_norm=norms[i], device=device).to(device))
+        nets.append(ResNet18(norm_type='LP', lp_norm=norms[i], device=device).to(device))
 
     for norm_type in other_norms:
-        nets.append(VGG('VGG11', norm_type=norm_type, device=device).to(device))
+        # nets.append(VGG('VGG11', norm_type=norm_type, device=device).to(device))
+        nets.append(ResNet18(norm_type=norm_type, device=device).to(device))
 
     net_names = ['l'+str(x) for x in norms] + other_norms
     for i in range(len(nets)):

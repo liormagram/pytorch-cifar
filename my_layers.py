@@ -45,3 +45,11 @@ class MyBatchNorm2d(nn.BatchNorm2d):
             input = input * self.weight[None, :, None, None] + self.bias[None, :, None, None]
 
         return input
+
+
+class Identity(nn.BatchNorm2d):
+    def __init__(self):
+        super(Identity, self).__init__()
+
+    def forward(self, input):
+        return input
