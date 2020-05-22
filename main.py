@@ -181,7 +181,7 @@ def main_nets():
     # Model
     print('==> Building model..')
     nets = []
-    norms = [1, 2, 3, 4, 5, 10]
+    norms = [1]#, 2, 3, 4, 5, 10]
     other_norms = ['BN', 'ST']
     for i in range(len(norms)):
         # nets.append(VGG('VGG11', norm_type='LP', lp_norm=norms[i], device=device).to(device))
