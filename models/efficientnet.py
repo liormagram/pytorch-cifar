@@ -7,6 +7,8 @@ Reference: https://github.com/keras-team/keras-applications/blob/master/keras_ap
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+from lp_norm import MyLpNorm2d
+from my_layers import Identity, norm
 
 
 def swish(x):
@@ -48,11 +50,16 @@ class Block(nn.Module):
                  stride,
                  expand_ratio=1,
                  se_ratio=0.,
-                 drop_rate=0.):
+                 drop_rate=0.,
+                 norm_type='BN', lp_norm=2, device='cpu'):
         super(Block, self).__init__()
         self.stride = stride
         self.drop_rate = drop_rate
         self.expand_ratio = expand_ratio
+
+        self.norm_type = norm_type
+        self.lp_norm = lp_norm
+        self.device = device
 
         # Expansion
         planes = expand_ratio * in_planes
@@ -62,7 +69,8 @@ class Block(nn.Module):
                                stride=1,
                                padding=0,
                                bias=False)
-        self.bn1 = nn.BatchNorm2d(planes)
+        # self.bn1 = nn.BatchNorm2d(planes)
+        self.bn1 = norm(norm_type=self.norm_type, num_features=planes, lp_norm=self.lp_norm, device=self.device)
 
         # Depthwise conv
         self.conv2 = nn.Conv2d(planes,
@@ -72,7 +80,8 @@ class Block(nn.Module):
                                padding=(1 if kernel_size == 3 else 2),
                                groups=planes,
                                bias=False)
-        self.bn2 = nn.BatchNorm2d(planes)
+        self.bn2 = norm(norm_type=self.norm_type, num_features=planes, lp_norm=self.lp_norm, device=self.device)
+        # self.bn2 = nn.BatchNorm2d(planes)
 
         # SE layers
         se_planes = int(in_planes * se_ratio)
@@ -85,7 +94,8 @@ class Block(nn.Module):
                                stride=1,
                                padding=0,
                                bias=False)
-        self.bn3 = nn.BatchNorm2d(out_planes)
+        self.bn3 = norm(norm_type=self.norm_type, num_features=out_planes, lp_norm=self.lp_norm, device=self.device)
+        # self.bn3 = nn.BatchNorm2d(out_planes)
 
         # Skip connection if in and out shapes are the same (MV-V2 style)
         self.has_skip = (stride == 1) and (in_planes == out_planes)
@@ -103,8 +113,13 @@ class Block(nn.Module):
 
 
 class EfficientNet(nn.Module):
-    def __init__(self, cfg, num_classes=10):
+    def __init__(self, cfg, num_classes=10, norm_type='BN', lp_norm=2, device='cpu'):
         super(EfficientNet, self).__init__()
+
+        self.norm_type = norm_type
+        self.lp_norm = lp_norm
+        self.device = device
+
         self.cfg = cfg
         self.conv1 = nn.Conv2d(3,
                                32,
@@ -112,7 +127,8 @@ class EfficientNet(nn.Module):
                                stride=1,
                                padding=1,
                                bias=False)
-        self.bn1 = nn.BatchNorm2d(32)
+        self.bn1 = norm(norm_type=self.norm_type, num_features=32, lp_norm=self.lp_norm, device=self.device)
+        # self.bn1 = nn.BatchNorm2d(32)
         self.layers = self._make_layers(in_planes=32)
         self.linear = nn.Linear(cfg['out_planes'][-1], num_classes)
 
@@ -130,7 +146,8 @@ class EfficientNet(nn.Module):
                           stride,
                           expansion,
                           se_ratio=0.25,
-                          drop_rate=0))
+                          drop_rate=0,
+                          norm_type=self.norm_type, lp_norm=self.lp_norm, device=self.device))
                 in_planes = out_planes
         return nn.Sequential(*layers)
 
@@ -143,7 +160,7 @@ class EfficientNet(nn.Module):
         return out
 
 
-def EfficientNetB0():
+def EfficientNetB0(norm_type='BN', lp_norm=2, device='cpu'):
     cfg = {
         'num_blocks': [1, 2, 2, 3, 3, 4, 1],
         'expansion': [1, 6, 6, 6, 6, 6, 6],
@@ -151,15 +168,15 @@ def EfficientNetB0():
         'kernel_size': [3, 3, 5, 3, 5, 5, 3],
         'stride': [1, 2, 2, 2, 1, 2, 1],
     }
-    return EfficientNet(cfg)
+    return EfficientNet(cfg, norm_type=norm_type, lp_norm=lp_norm, device=device)
 
 
-def test():
-    net = EfficientNetB0()
-    x = torch.randn(2, 3, 32, 32)
-    y = net(x)
-    print(y.shape)
-
-
-if __name__ == '__main__':
-    test()
+# def test():
+#     net = EfficientNetB0()
+#     x = torch.randn(2, 3, 32, 32)
+#     y = net(x)
+#     print(y.shape)
+#
+#
+# if __name__ == '__main__':
+#     test()

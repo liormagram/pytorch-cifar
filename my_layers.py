@@ -1,5 +1,6 @@
 import torch
 import torch.nn as nn
+from lp_norm import MyLpNorm2d
 
 class MyBatchNorm2d(nn.BatchNorm2d):
     def __init__(self, num_features, eps=1e-5, momentum=0.1,
@@ -54,3 +55,11 @@ class Identity(nn.BatchNorm2d):
 
     def forward(self, input):
         return input.to(self.device)
+
+def norm(norm_type, num_features, lp_norm, device):
+    if norm_type == 'ST':
+        return Identity(device=device)
+    if norm_type == 'BN':
+        return MyLpNorm2d(num_features=num_features, norm=lp_norm, device=device)
+    if norm_type == 'LP':
+        return nn.BatchNorm2d(num_features)
