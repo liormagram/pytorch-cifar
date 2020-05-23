@@ -186,12 +186,14 @@ def main_nets():
     for i in range(len(norms)):
         # nets.append(VGG('VGG11', norm_type='LP', lp_norm=norms[i], device=device).to(device))
         # nets.append(ResNet18(norm_type='LP', lp_norm=norms[i], device=device).to(device))
-        nets.append(EfficientNetB0(norm_type='LP', lp_norm=norms[i], device=device).to(device))
+        # nets.append(EfficientNetB0(norm_type='LP', lp_norm=norms[i], device=device).to(device))
+        nets.append(GoogLeNet(norm_type='LP', lp_norm=norms[i], device=device).to(device))
 
     for norm_type in other_norms:
         # nets.append(VGG('VGG11', norm_type=norm_type, device=device).to(device))
         # nets.append(ResNet18(norm_type=norm_type, device=device).to(device))
-        nets.append(EfficientNetB0(norm_type=norm_type, device=device).to(device))
+        # nets.append(EfficientNetB0(norm_type=norm_type, device=device).to(device))
+        nets.append(GoogLeNet(norm_type=norm_type, device=device).to(device))
 
     net_names = ['l'+str(x) for x in norms] + other_norms
     for i in range(len(nets)):
