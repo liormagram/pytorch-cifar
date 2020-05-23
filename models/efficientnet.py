@@ -101,10 +101,17 @@ class Block(nn.Module):
         self.has_skip = (stride == 1) and (in_planes == out_planes)
 
     def forward(self, x):
-        out = x if self.expand_ratio == 1 else swish(self.bn1(self.conv1(x)))
-        out = swish(self.bn2(self.conv2(out)))
-        out = self.se(out)
-        out = self.bn3(self.conv3(out))
+        if self.norm_type == 'ST':
+            out = x if self.expand_ratio == 1 else swish(self.conv1(x))
+            out = swish(self.conv2(out))
+            out = self.se(out)
+            out = self.conv3(out)
+        else:
+            out = x if self.expand_ratio == 1 else swish(self.bn1(self.conv1(x)))
+            out = swish(self.bn2(self.conv2(out)))
+            out = self.se(out)
+            out = self.bn3(self.conv3(out))
+
         if self.has_skip:
             if self.training and self.drop_rate > 0:
                 out = drop_connect(out, self.drop_rate)
@@ -152,7 +159,10 @@ class EfficientNet(nn.Module):
         return nn.Sequential(*layers)
 
     def forward(self, x):
-        out = swish(self.bn1(self.conv1(x)))
+        if self.norm_type == 'ST':
+            out = swish(self.conv1(x))
+        else:
+            out = swish(self.bn1(self.conv1(x)))
         out = self.layers(out)
         out = F.adaptive_avg_pool2d(out, 1)
         out = out.view(out.size(0), -1)
