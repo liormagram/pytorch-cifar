@@ -249,20 +249,21 @@ def main_nets():
         for i in range(len(nets)):
             train_loss, train_acc = train(nets[i], trainloader, criterion, optimizers[i], epoch, device)
             test_loss, test_acc, best_acc = test(nets[i], testloader, criterion, epoch, device, best_acc)
-
             loss_train_dict[str(net_names[i])] = train_loss
             loss_test_dict[str(net_names[i])] = test_loss
             acc_train_dict[str(net_names[i])] = train_acc
             acc_test_dict[str(net_names[i])] = test_acc
 
-        # writer.add_scalars('Loss_'+str(i), {'train_loss_'+str(i): train_loss, 'test_loss_'+str(i): test_loss}, epoch)
-        # writer.add_scalars('Accuracy_'+str(i), {'train_acc_'+str(i): train_acc, 'test_acc_'+str(i): test_acc}, epoch)
+            # writer.add_scalars('Loss_'+str(i), {'train_loss_'+str(i): train_loss, 'test_loss_'+str(i): test_loss}, epoch)
+            # writer.add_scalars('Accuracy_'+str(i), {'train_acc_'+str(i): train_acc, 'test_acc_'+str(i): test_acc}, epoch)
         writer.add_scalars('Loss_train', loss_train_dict, epoch)
         writer.add_scalars('Loss_test', loss_test_dict, epoch)
         writer.add_scalars('Acc_train', acc_train_dict, epoch)
         writer.add_scalars('Acc_test', acc_test_dict, epoch)
 
+
     writer.close()
+
 
 def get_net(net_name='VGG', norm_type='LP', lp_norm=2, device='cpu'):
     if net_name == 'VGG':
