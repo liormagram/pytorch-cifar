@@ -125,6 +125,7 @@ def main():
 def main_nets():
     parser = argparse.ArgumentParser(description='PyTorch CIFAR10 Training')
     parser.add_argument('--lr', default=0.1, type=float, help='learning rate')
+    parser.add_argument('--exp', default='A', type=str, help='experiment')
     # parser.add_argument('--lp_norm', default=2, type=int, help='lp norm')
     parser.add_argument('--epochs', default=5, type=int, help='epochs')
     parser.add_argument('--batch_size', default=512, type=int, help='batch_size')
@@ -183,8 +184,11 @@ def main_nets():
     print('==> Building model..')
     print(args.net_name)
     nets = []
-    # norms = [1, 2, 3, 4, 5, 10]
-    norms = [1, 2]
+    if args.exp == 'A':
+        norms = [1, 2, 3, 4, 5, 10]
+    else:
+        norms = [1, 2]
+
     other_norms = ['BN', 'ST']
     for i in range(len(norms)):
         nets.append(get_net(net_name=args.net_name, norm_type='LP', lp_norm=norms[i], device=device))
