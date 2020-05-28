@@ -5,6 +5,7 @@ See the paper "ShuffleNet: An Extremely Efficient Convolutional Neural Network f
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+from my_layers import norm
 
 
 class ShuffleBlock(nn.Module):
@@ -20,19 +21,27 @@ class ShuffleBlock(nn.Module):
 
 
 class Bottleneck(nn.Module):
-    def __init__(self, in_planes, out_planes, stride, groups):
+    def __init__(self, in_planes, out_planes, stride, groups, norm_type='BN', lp_norm=2, device='cpu'):
         super(Bottleneck, self).__init__()
         self.stride = stride
+
+        self.norm_type = norm_type
+        self.lp_norm = lp_norm
+        self.device = device
 
         mid_planes = out_planes/4
         g = 1 if in_planes==24 else groups
         self.conv1 = nn.Conv2d(in_planes, mid_planes, kernel_size=1, groups=g, bias=False)
-        self.bn1 = nn.BatchNorm2d(mid_planes)
+        # self.bn1 = nn.BatchNorm2d(mid_planes)
+        self.bn1 = norm(norm_type=self.norm_type, num_features=mid_planes, lp_norm=self.lp_norm, device=self.device)
         self.shuffle1 = ShuffleBlock(groups=g)
         self.conv2 = nn.Conv2d(mid_planes, mid_planes, kernel_size=3, stride=stride, padding=1, groups=mid_planes, bias=False)
-        self.bn2 = nn.BatchNorm2d(mid_planes)
+        # self.bn2 = nn.BatchNorm2d(mid_planes)
+        self.bn2 = norm(norm_type=self.norm_type, num_features=mid_planes, lp_norm=self.lp_norm, device=self.device)
         self.conv3 = nn.Conv2d(mid_planes, out_planes, kernel_size=1, groups=groups, bias=False)
-        self.bn3 = nn.BatchNorm2d(out_planes)
+        # self.bn3 = nn.BatchNorm2d(out_planes)
+        self.bn3 = norm(norm_type=self.norm_type, num_features=out_planes, lp_norm=self.lp_norm, device=self.device)
+
 
         self.shortcut = nn.Sequential()
         if stride == 2:
@@ -49,14 +58,20 @@ class Bottleneck(nn.Module):
 
 
 class ShuffleNet(nn.Module):
-    def __init__(self, cfg):
+    def __init__(self, cfg, norm_type='BN', lp_norm=2, device='cpu'):
         super(ShuffleNet, self).__init__()
         out_planes = cfg['out_planes']
         num_blocks = cfg['num_blocks']
         groups = cfg['groups']
 
+        self.norm_type = norm_type
+        self.lp_norm = lp_norm
+        self.device = device
+
         self.conv1 = nn.Conv2d(3, 24, kernel_size=1, bias=False)
-        self.bn1 = nn.BatchNorm2d(24)
+        # self.bn1 = nn.BatchNorm2d(24)
+        self.bn1 = norm(norm_type=self.norm_type, num_features=24, lp_norm=self.lp_norm, device=self.device)
+
         self.in_planes = 24
         self.layer1 = self._make_layer(out_planes[0], num_blocks[0], groups)
         self.layer2 = self._make_layer(out_planes[1], num_blocks[1], groups)
@@ -68,7 +83,8 @@ class ShuffleNet(nn.Module):
         for i in range(num_blocks):
             stride = 2 if i == 0 else 1
             cat_planes = self.in_planes if i == 0 else 0
-            layers.append(Bottleneck(self.in_planes, out_planes-cat_planes, stride=stride, groups=groups))
+            layers.append(Bottleneck(self.in_planes, out_planes-cat_planes, stride=stride, groups=groups,
+                                     norm_type=self.norm_type, lp_norm=self.lp_norm, device=self.device))
             self.in_planes = out_planes
         return nn.Sequential(*layers)
 
@@ -83,21 +99,21 @@ class ShuffleNet(nn.Module):
         return out
 
 
-def ShuffleNetG2():
+def ShuffleNetG2(norm_type='BN', lp_norm=2, device='cpu'):
     cfg = {
         'out_planes': [200,400,800],
         'num_blocks': [4,8,4],
         'groups': 2
     }
-    return ShuffleNet(cfg)
+    return ShuffleNet(cfg, norm_type, lp_norm, device)
 
-def ShuffleNetG3():
+def ShuffleNetG3(norm_type='BN', lp_norm=2, device='cpu'):
     cfg = {
         'out_planes': [240,480,960],
         'num_blocks': [4,8,4],
         'groups': 3
     }
-    return ShuffleNet(cfg)
+    return ShuffleNet(cfg, norm_type, lp_norm, device)
 
 
 def test():

@@ -274,6 +274,8 @@ def get_net(net_name='VGG', norm_type='LP', lp_norm=2, device='cpu'):
         return GoogLeNet(norm_type=norm_type, lp_norm=lp_norm, device=device).to(device)
     elif net_name == 'DPN':
         return DPN26(norm_type=norm_type, lp_norm=lp_norm, device=device).to(device)
+    elif net_name == 'ShuffleNet':
+        return ShuffleNetG2(norm_type=norm_type, lp_norm=lp_norm, device=device).to(device)
     return -1
 
 if __name__ == '__main__':
