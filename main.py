@@ -183,7 +183,8 @@ def main_nets():
     print('==> Building model..')
     print(args.net_name)
     nets = []
-    norms = [1, 2, 3, 4, 5, 10]
+    # norms = [1, 2, 3, 4, 5, 10]
+    norms = [1, 2]
     other_norms = ['BN', 'ST']
     for i in range(len(norms)):
         nets.append(get_net(net_name=args.net_name, norm_type='LP', lp_norm=norms[i], device=device))
