@@ -268,21 +268,33 @@ def main_nets():
 
     writer.close()
 
+nets = {'VGG'           :VGG,
+        'ResNet'        :ResNet18,
+        'EfficientNet'  :EfficientNet,
+        'GoogLeNet'     :GoogLeNet,
+        'DPN'           :DPN26,
+        'ShuffleNet'    :ShuffleNetG2,
+        'MobileNet'     :MobileNet}
 
 def get_net(net_name='VGG', norm_type='LP', lp_norm=2, device='cpu'):
-    if net_name == 'VGG':
-        return VGG('VGG11', norm_type=norm_type, lp_norm=lp_norm, device=device).to(device)
-    elif net_name == 'ResNet':
-        return ResNet18(norm_type=norm_type, lp_norm=lp_norm, device=device).to(device)
-    elif net_name == 'EfficientNet':
-        return EfficientNet(norm_type=norm_type, lp_norm=lp_norm, device=device).to(device)
-    elif net_name == 'GoogleLeNet':
-        return GoogLeNet(norm_type=norm_type, lp_norm=lp_norm, device=device).to(device)
-    elif net_name == 'DPN':
-        return DPN26(norm_type=norm_type, lp_norm=lp_norm, device=device).to(device)
-    elif net_name == 'ShuffleNet':
-        return ShuffleNetG2(norm_type=norm_type, lp_norm=lp_norm, device=device).to(device)
-    return -1
+    return nets[net_name](norm_type=norm_type, lp_norm=lp_norm, device=device)
+
+# def get_net(net_name='VGG', norm_type='LP', lp_norm=2, device='cpu'):
+#     if net_name == 'VGG':
+#         return VGG(norm_type=norm_type, lp_norm=lp_norm, device=device).to(device)
+#     elif net_name == 'ResNet':
+#         return ResNet18(norm_type=norm_type, lp_norm=lp_norm, device=device).to(device)
+#     elif net_name == 'EfficientNet':
+#         return EfficientNet(norm_type=norm_type, lp_norm=lp_norm, device=device).to(device)
+#     elif net_name == 'GoogLeNet':
+#         return GoogLeNet(norm_type=norm_type, lp_norm=lp_norm, device=device).to(device)
+#     elif net_name == 'DPN':
+#         return DPN26(norm_type=norm_type, lp_norm=lp_norm, device=device).to(device)
+#     elif net_name == 'ShuffleNet':
+#         return ShuffleNetG2(norm_type=norm_type, lp_norm=lp_norm, device=device).to(device)
+#     elif net_name == 'Mobilenet':
+#         return MobileNet(norm_type=norm_type, lp_norm=lp_norm, device=device).to(device)
+#     return -1
 
 if __name__ == '__main__':
     main_nets()

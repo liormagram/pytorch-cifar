@@ -12,7 +12,7 @@ cfg = {
 }
 
 class VGG(nn.Module):
-    def __init__(self, vgg_name, norm_type='ST', lp_norm=2, device='cpu'):
+    def __init__(self, vgg_name='VGG11', norm_type='ST', lp_norm=2, device='cpu'):
         super(VGG, self).__init__()
         self.norm_type = norm_type
         self.lp_norm = lp_norm
