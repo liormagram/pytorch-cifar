@@ -128,6 +128,7 @@ def main_nets():
     # parser.add_argument('--lp_norm', default=2, type=int, help='lp norm')
     parser.add_argument('--epochs', default=5, type=int, help='epochs')
     parser.add_argument('--batch_size', default=512, type=int, help='batch_size')
+    parser.add_argument('--net_name', default='DPN', type=str, help='net_name')
     parser.add_argument('--resume', '-r', action='store_true',
                         help='resume from checkpoint')
     args = parser.parse_args()
@@ -180,22 +181,25 @@ def main_nets():
 
     # Model
     print('==> Building model..')
+    print(args.net_name)
     nets = []
     norms = [1, 2, 3, 4, 5, 10]
     other_norms = ['BN', 'ST']
     for i in range(len(norms)):
+        nets.append(get_net(net_name=args.net_name, norm_type='LP', lp_norm=norms[i], device=device))
         # nets.append(VGG('VGG11', norm_type='LP', lp_norm=norms[i], device=device).to(device))
         # nets.append(ResNet18(norm_type='LP', lp_norm=norms[i], device=device).to(device))
         # nets.append(EfficientNetB0(norm_type='LP', lp_norm=norms[i], device=device).to(device))
         # nets.append(GoogLeNet(norm_type='LP', lp_norm=norms[i], device=device).to(device))
-        nets.append(DPN26(norm_type='LP', lp_norm=norms[i], device=device).to(device))
+        # nets.append(DPN26(norm_type='LP', lp_norm=norms[i], device=device).to(device))
 
     for norm_type in other_norms:
+        nets.append(get_net(net_name=args.net_name, norm_type=norm_type, device=device))
         # nets.append(VGG('VGG11', norm_type=norm_type, device=device).to(device))
         # nets.append(ResNet18(norm_type=norm_type, device=device).to(device))
         # nets.append(EfficientNetB0(norm_type=norm_type, device=device).to(device))
         # nets.append(GoogLeNet(norm_type=norm_type, device=device).to(device))
-        nets.append(DPN26(norm_type=norm_type, device=device).to(device))
+        # nets.append(DPN26(norm_type=norm_type, device=device).to(device))
 
     net_names = ['l'+str(x) for x in norms] + other_norms
     for i in range(len(nets)):
@@ -258,6 +262,19 @@ def main_nets():
         writer.add_scalars('Acc_test', acc_test_dict, epoch)
 
     writer.close()
+
+def get_net(net_name='VGG', norm_type='LP', lp_norm=2, device='cpu'):
+    if net_name == 'VGG':
+        return VGG('VGG11', norm_type=norm_type, lp_norm=lp_norm, device=device).to(device)
+    elif net_name == 'ResNet':
+        return ResNet18(norm_type=norm_type, lp_norm=lp_norm, device=device).to(device)
+    elif net_name == 'EfficientNet':
+        return EfficientNet(norm_type=norm_type, lp_norm=lp_norm, device=device).to(device)
+    elif net_name == 'GoogleLeNet':
+        return GoogLeNet(norm_type=norm_type, lp_norm=lp_norm, device=device).to(device)
+    elif net_name == 'ResNet':
+        return DPN26(norm_type=norm_type, lp_norm=lp_norm, device=device).to(device)
+    return -1
 
 if __name__ == '__main__':
     main_nets()
