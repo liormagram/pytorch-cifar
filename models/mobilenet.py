@@ -17,7 +17,6 @@ class Block(nn.Module):
         self.norm_type = norm_type
         self.lp_norm = lp_norm
         self.device = device
-        print(self.device)
 
         self.conv1 = nn.Conv2d(in_planes, in_planes, kernel_size=3, stride=stride, padding=1, groups=in_planes, bias=False)
         # self.bn1 = nn.BatchNorm2d(in_planes)
@@ -42,7 +41,6 @@ class MobileNet(nn.Module):
         self.norm_type = norm_type
         self.lp_norm = lp_norm
         self.device = device
-        print(self.device)
 
         self.conv1 = nn.Conv2d(3, 32, kernel_size=3, stride=1, padding=1, bias=False)
         self.bn1 = norm(norm_type=self.norm_type, num_features=32, lp_norm=self.lp_norm, device=self.device)
@@ -56,7 +54,7 @@ class MobileNet(nn.Module):
         for x in self.cfg:
             out_planes = x if isinstance(x, int) else x[0]
             stride = 1 if isinstance(x, int) else x[1]
-            layers.append(Block(in_planes, out_planes, stride))
+            layers.append(Block(in_planes, out_planes, stride, norm_type=self.norm_type, lp_norm=self.lp_norm, device=self.device))
             in_planes = out_planes
         return nn.Sequential(*layers)
 
