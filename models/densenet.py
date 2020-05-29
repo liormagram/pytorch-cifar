@@ -63,19 +63,19 @@ class DenseNet(nn.Module):
         self.dense1 = self._make_dense_layers(block, num_planes, nblocks[0])
         num_planes += nblocks[0]*growth_rate
         out_planes = int(math.floor(num_planes*reduction))
-        self.trans1 = Transition(num_planes, out_planes)
+        self.trans1 = Transition(num_planes, out_planes, norm_type=self.norm_type, lp_norm=self.lp_norm, device=self.device)
         num_planes = out_planes
 
         self.dense2 = self._make_dense_layers(block, num_planes, nblocks[1])
         num_planes += nblocks[1]*growth_rate
         out_planes = int(math.floor(num_planes*reduction))
-        self.trans2 = Transition(num_planes, out_planes)
+        self.trans2 = Transition(num_planes, out_planes, norm_type=self.norm_type, lp_norm=self.lp_norm, device=self.device)
         num_planes = out_planes
 
         self.dense3 = self._make_dense_layers(block, num_planes, nblocks[2])
         num_planes += nblocks[2]*growth_rate
         out_planes = int(math.floor(num_planes*reduction))
-        self.trans3 = Transition(num_planes, out_planes)
+        self.trans3 = Transition(num_planes, out_planes, norm_type=self.norm_type, lp_norm=self.lp_norm, device=self.device)
         num_planes = out_planes
 
         self.dense4 = self._make_dense_layers(block, num_planes, nblocks[3])
