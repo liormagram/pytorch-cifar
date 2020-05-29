@@ -126,7 +126,6 @@ def main_nets():
     parser = argparse.ArgumentParser(description='PyTorch CIFAR10 Training')
     parser.add_argument('--lr', default=0.1, type=float, help='learning rate')
     parser.add_argument('--exp', default='A', type=str, help='experiment')
-    # parser.add_argument('--lp_norm', default=2, type=int, help='lp norm')
     parser.add_argument('--epochs', default=5, type=int, help='epochs')
     parser.add_argument('--batch_size', default=512, type=int, help='batch_size')
     parser.add_argument('--net_name', default='DPN', type=str, help='net_name')
@@ -214,20 +213,15 @@ def main_nets():
             nets[i] = torch.nn.DataParallel(nets[i])
             cudnn.benchmark = True
 
-    # net = ResNet18()
     # net = PreActResNet18()
     # net = GoogLeNet()
     # net = DenseNet121()
     # net = ResNeXt29_2x64d()
-    # net = MobileNet()
     # net = MobileNetV2()
-    # net = DPN92()
     # net = ShuffleNetG2()
     # net = SENet18()
     # net = ShuffleNetV2(1)
-    # net = EfficientNetB0()
     # net = RegNetX_200MF()
-    # net = net.to(device)
 
 
     # if args.resume:
@@ -281,22 +275,6 @@ nets = {'VGG'           :VGG,
 def get_net(net_name='VGG', norm_type='LP', lp_norm=2, device='cpu'):
     return nets[net_name](norm_type=norm_type, lp_norm=lp_norm, device=device)
 
-# def get_net(net_name='VGG', norm_type='LP', lp_norm=2, device='cpu'):
-#     if net_name == 'VGG':
-#         return VGG(norm_type=norm_type, lp_norm=lp_norm, device=device).to(device)
-#     elif net_name == 'ResNet':
-#         return ResNet18(norm_type=norm_type, lp_norm=lp_norm, device=device).to(device)
-#     elif net_name == 'EfficientNet':
-#         return EfficientNet(norm_type=norm_type, lp_norm=lp_norm, device=device).to(device)
-#     elif net_name == 'GoogLeNet':
-#         return GoogLeNet(norm_type=norm_type, lp_norm=lp_norm, device=device).to(device)
-#     elif net_name == 'DPN':
-#         return DPN26(norm_type=norm_type, lp_norm=lp_norm, device=device).to(device)
-#     elif net_name == 'ShuffleNet':
-#         return ShuffleNetG2(norm_type=norm_type, lp_norm=lp_norm, device=device).to(device)
-#     elif net_name == 'Mobilenet':
-#         return MobileNet(norm_type=norm_type, lp_norm=lp_norm, device=device).to(device)
-#     return -1
 
 if __name__ == '__main__':
     main_nets()
