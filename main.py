@@ -186,6 +186,8 @@ def main_nets():
     nets = []
     if args.exp == 'A':
         norms = [1, 2, 3, 4, 5, 10]
+    elif args.exp == 'B':
+        norms = [1, 10, 100, 1000]
     else:
         norms = [1, 2]
 
