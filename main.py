@@ -270,7 +270,8 @@ nets = {'VGG'           :VGG,
         'GoogLeNet'     :GoogLeNet,
         'DPN'           :DPN26,
         'ShuffleNet'    :ShuffleNetG2,
-        'MobileNet'     :MobileNet}
+        'MobileNet'     :MobileNet,
+        'DenseNet'      :DenseNet121}
 
 def get_net(net_name='VGG', norm_type='LP', lp_norm=2, device='cpu'):
     return nets[net_name](norm_type=norm_type, lp_norm=lp_norm, device=device)
