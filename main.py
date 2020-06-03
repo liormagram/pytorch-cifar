@@ -266,7 +266,7 @@ def main_nets():
 
 nets = {'VGG'           :VGG,
         'ResNet'        :ResNet18,
-        'EfficientNet'  :EfficientNet,
+        'EfficientNet'  :EfficientNetB0,
         'GoogLeNet'     :GoogLeNet,
         'DPN'           :DPN26,
         'ShuffleNet'    :ShuffleNetG2,
