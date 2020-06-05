@@ -27,21 +27,21 @@ class MyHarNorm2d(nn.BatchNorm2d):
         # calculate running estimates
         if self.training:
             n = input.numel() / input.size(1)
-            # mean = input.mean([0, 2, 3])
+            mean = input.mean([0, 2, 3])
             # use biased var in train
             har = (torch.tensor([n-1])) / \
                  (torch.sum(input.pow(-1)))
 
             with torch.no_grad():
-                # self.running_mean = exponential_average_factor * mean\
-                #     + (1 - exponential_average_factor) * self.running_mean
+                self.running_mean = exponential_average_factor * mean\
+                    + (1 - exponential_average_factor) * self.running_mean
 
                 self.running_har = (exponential_average_factor * har.to(self.device) * n / (n - 1)\
                                     + (1 - exponential_average_factor) * self.running_har.to(self.device)).to(self.device)
         else:
-            # mean = self.running_mean
+            mean = self.running_mean
             har = self.running_har
-        input = har.to(self.device)
+        input = ((input - mean[None, :, None, None]) / (har[None, :, None, None].to(self.device) + self.eps)).to(self.device)
 
         if self.affine:
             input = input * self.weight[None, :, None, None] + self.bias[None, :, None, None]
@@ -72,22 +72,22 @@ class MyGeomNorm2d(nn.BatchNorm2d):
         # calculate running estimates
         if self.training:
             n = input.numel() / input.size(1)
-            # mean = input.mean([0, 2, 3])
+            mean = input.mean([0, 2, 3])
             # use biased var in train
             math.e
             geom = torch.pow(torch.tensor([math.e]),
                              (torch.sum(torch.log(input))) / (torch.tensor([n-1])) )
 
             with torch.no_grad():
-                # self.running_mean = exponential_average_factor * mean\
-                #     + (1 - exponential_average_factor) * self.running_mean
+                self.running_mean = exponential_average_factor * mean\
+                    + (1 - exponential_average_factor) * self.running_mean
 
                 self.running_geom = (exponential_average_factor * geom.to(self.device) * n / (n - 1)\
                                     + (1 - exponential_average_factor) * self.running_geom.to(self.device)).to(self.device)
         else:
-            # mean = self.running_mean
+            mean = self.running_mean
             geom = self.running_har
-        input = geom.to(self.device)
+        input = ((input - mean[None, :, None, None]) / (geom[None, :, None, None].to(self.device) + self.eps)).to(self.device)
 
         if self.affine:
             input = input * self.weight[None, :, None, None] + self.bias[None, :, None, None]
