@@ -29,8 +29,8 @@ class MyHarNorm2d(nn.BatchNorm2d):
             n = input.numel() / input.size(1)
             mean = input.mean([0, 2, 3])
             # use biased var in train
-            har = (torch.tensor([n-1])) / \
-                 (torch.sum(input.pow(-1)))
+            har = (torch.tensor([n-1]).to(self.device)) / \
+                 (torch.sum(input.pow(-1)).to(self.device))
 
             with torch.no_grad():
                 self.running_mean = exponential_average_factor * mean\
@@ -74,9 +74,9 @@ class MyGeomNorm2d(nn.BatchNorm2d):
             n = input.numel() / input.size(1)
             mean = input.mean([0, 2, 3])
             # use biased var in train
-            math.e
-            geom = torch.pow(torch.tensor([math.e]),
-                             (torch.sum(torch.log(input))) / (torch.tensor([n-1])) )
+
+            geom = torch.pow(torch.tensor([math.e]).to(self.device),
+                             (torch.sum(torch.log(input)).to(self.device)) / (torch.tensor([n-1]).to(self.device)) )
 
             with torch.no_grad():
                 self.running_mean = exponential_average_factor * mean\
