@@ -86,7 +86,7 @@ class MyGeomNorm2d(nn.BatchNorm2d):
                                     + (1 - exponential_average_factor) * self.running_geom.to(self.device)).to(self.device)
         else:
             mean = self.running_mean
-            geom = self.running_har
+            geom = self.running_geom
         input = ((input - mean[None, :, None, None]) / (geom[None, :, None, None].to(self.device) + self.eps)).to(self.device)
 
         if self.affine:
