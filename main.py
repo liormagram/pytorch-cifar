@@ -190,7 +190,7 @@ def main_nets():
     else:
         norms = [1, 2]
 
-    other_norms = ['BN', 'ST']
+    other_norms = ['BN', 'ST', 'HR', 'GM']
     for i in range(len(norms)):
         nets.append(get_net(net_name=args.net_name, norm_type='LP', lp_norm=norms[i], device=device))
         # nets.append(VGG('VGG11', norm_type='LP', lp_norm=norms[i], device=device).to(device))

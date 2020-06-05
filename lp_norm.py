@@ -3,12 +3,13 @@ import torch.nn as nn
 
 class MyLpNorm2d(nn.BatchNorm2d):
     def __init__(self, num_features, eps=1e-5, momentum=0.1,
-                 affine=True, track_running_stats=True, norm=2, device='cpu'):
+                 affine=True, track_running_stats=True, norm=2, device='cpu', shift=True):
         super(MyLpNorm2d, self).__init__(
             num_features, eps, momentum, affine, track_running_stats)
         self.norm = norm
         self.device = device
         self.running_lp = torch.zeros(num_features)
+        self.shift = shift
 
     def forward(self, input):
         self._check_input_dim(input)
@@ -28,8 +29,12 @@ class MyLpNorm2d(nn.BatchNorm2d):
             n = input.numel() / input.size(1)
             mean = input.mean([0, 2, 3])
             # use biased var in train
-            lp = (input-mean[None, :, None, None]).norm(self.norm, [0, 2, 3]) / \
-                 torch.pow(torch.tensor([n-1]).to(self.device), 1/float(self.norm))
+            if self.shift:
+                lp = (input-mean[None, :, None, None]).norm(self.norm, [0, 2, 3]) / \
+                     torch.pow(torch.tensor([n-1]).to(self.device), 1/float(self.norm))
+            else:
+                lp = input.norm(self.norm, [0, 2, 3]) / \
+                     torch.pow(torch.tensor([n - 1]).to(self.device), 1 / float(self.norm))
 
             with torch.no_grad():
                 self.running_mean = exponential_average_factor * mean\
