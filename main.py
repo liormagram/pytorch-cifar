@@ -183,14 +183,19 @@ def main_nets():
     print('==> Building model..')
     print(args.net_name)
     nets = []
-    if args.exp == 'A':
+    norms = []
+
+    if args.exp == 'FULL':
         norms = [1, 2, 3, 4, 5, 10]
-    elif args.exp == 'B':
+    elif args.exp == 'EXP':
         norms = [1, 10, 100, 1000]
-    else:
+    elif args.exp == 'THIN':
         norms = [1, 2]
 
     other_norms = ['BN', 'ST', 'HR', 'GM']
+    if args.exp == 'NEW':
+        other_norms = ['HR', 'GM']
+
     for i in range(len(norms)):
         nets.append(get_net(net_name=args.net_name, norm_type='LP', lp_norm=norms[i], device=device))
         # nets.append(VGG('VGG11', norm_type='LP', lp_norm=norms[i], device=device).to(device))
