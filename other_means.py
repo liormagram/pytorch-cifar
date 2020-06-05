@@ -31,6 +31,7 @@ class MyHarNorm2d(nn.BatchNorm2d):
             # use biased var in train
             har = (torch.tensor([n-1])) / \
                  (torch.sum(input.pow(-1)))
+            print('har ' + str(har))
 
             with torch.no_grad():
                 # self.running_mean = exponential_average_factor * mean\
@@ -38,14 +39,17 @@ class MyHarNorm2d(nn.BatchNorm2d):
 
                 self.running_har = (exponential_average_factor * har.to(self.device) * n / (n - 1)\
                                     + (1 - exponential_average_factor) * self.running_har.to(self.device)).to(self.device)
+                print(self.running_har)
         else:
             # mean = self.running_mean
             har = self.running_har
         input = har.to(self.device)
+        print('input before affine ' + str(input))
 
         if self.affine:
             input = input * self.weight[None, :, None, None] + self.bias[None, :, None, None]
 
+        print('input after affine ' + str(input))
         return input
 
 class MyGeomNorm2d(nn.BatchNorm2d):
