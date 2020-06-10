@@ -147,7 +147,7 @@ def norm(norm_type, num_features, lp_norm, device):
     if norm_type == 'ST':
         return Identity(device=device)
     if norm_type == 'BN':
-        return MyLpNorm2d(num_features=num_features, norm=lp_norm, device=device)
-    if norm_type == 'LP':
         return nn.BatchNorm2d(num_features)
+    if norm_type == 'LP':
+        return MyLpNorm2d(num_features=num_features, norm=lp_norm, device=device)
 

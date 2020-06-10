@@ -193,6 +193,9 @@ def main_nets():
         norms = [1, 2]
 
     other_norms = ['BN', 'ST']
+    if args.exp == 'ST':
+        other_norms = ['ST']
+        norms = []
 
     for i in range(len(norms)):
         nets.append(get_net(net_name=args.net_name, norm_type='LP', lp_norm=norms[i], device=device))
