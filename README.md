@@ -15,4 +15,4 @@ DPN26,
 ShuffleNetG2,
 DenseNet121
 
-To run the code, type: `python main.py --lr 0.01 --epochs 300 --batch_size 200 --exp FULL`
+To run the code, type: `python main.py --net_name VGG --lr 0.01 --epochs 300 --batch_size 200 --exp FULL`
